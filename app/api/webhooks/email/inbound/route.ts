@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Check if this is a reply to an existing lead
-    const existingLead = await findLeadByEmail((workspace as any).id, fromEmail);
+    const existingLead = await findLeadByEmail((workspace as any).id, fromEmail) as any;
     
     if (existingLead) {
       // This is a reply - pause the sequence
