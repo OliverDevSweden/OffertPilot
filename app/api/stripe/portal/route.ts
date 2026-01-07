@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     const { workspaceId } = await request.json();
 
-    const subscription = await getWorkspaceSubscription(workspaceId);
+    const subscription = await getWorkspaceSubscription(workspaceId) as any;
 
     if (!subscription.stripe_customer_id) {
       return NextResponse.json(
