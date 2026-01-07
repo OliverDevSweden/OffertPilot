@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Check if this is a reply to an existing lead
-    const existingLead = await findLeadByEmail(workspace.id, fromEmail);
+    const existingLead = await findLeadByEmail((workspace as any).id, fromEmail);
     
     if (existingLead) {
       // This is a reply - pause the sequence
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       // Save the inbound message
       await createMessage({
         lead_id: existingLead.id,
-        workspace_id: workspace.id,
+        workspace_id: (workspace as any).id,
         direction: 'in',
         subject: subject,
         body: text,
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       const threadId = extractThreadId(subject);
       
       const lead = await createLead({
-        workspace_id: workspace.id,
+        workspace_id: (workspace as any).id,
         customer_email: fromEmail,
         customer_name: customerName,
         thread_id: threadId,
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       // Save the initial message
       await createMessage({
         lead_id: lead.id,
-        workspace_id: workspace.id,
+        workspace_id: (workspace as any).id,
         direction: 'in',
         subject: subject,
         body: text,
