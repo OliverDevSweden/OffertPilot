@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     const { workspaceId, plan } = await request.json();
 
-    const subscription = await getWorkspaceSubscription(workspaceId);
+    const subscription = await getWorkspaceSubscription(workspaceId) as any;
 
     const session = await createCheckoutSession(
       workspaceId,
