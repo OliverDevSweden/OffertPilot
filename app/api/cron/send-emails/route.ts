@@ -24,9 +24,9 @@ export async function GET(request: Request) {
     
     console.log(`Processing ${leadsToProcess.length} leads for scheduled emails`);
     
-    const results = [];
+    const results: any[] = [];
     
-    for (const item of leadsToProcess) {
+    for (const item of leadsToProcess as any[]) {
       try {
         const lead = item.lead as any;
         const sequence = item.sequence as any;
