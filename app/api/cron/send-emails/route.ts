@@ -30,7 +30,7 @@ export async function GET(request: Request) {
       try {
         const lead = item.lead as any;
         const sequence = item.sequence as any;
-        const workspace = await getWorkspaceById(lead.workspace_id);
+        const workspace = await getWorkspaceById(lead.workspace_id) as any;
         
         // Get next step
         const nextStepNumber = item.current_step + 1;
