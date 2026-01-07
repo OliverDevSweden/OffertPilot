@@ -3,8 +3,6 @@ import { createServiceClient } from '@/lib/supabase/server';
 import { createLead, findLeadByEmail, updateLeadStatus } from '@/lib/db/leads';
 import { createMessage } from '@/lib/db/messages';
 import { extractNameFromEmail, normalizeEmailForMatching, extractThreadId } from '@/lib/utils/template';
-// @ts-ignore - SendGrid types
-import { parseEmail } from '@sendgrid/inbound-mail-parser';
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,13 +14,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.text();
-    const parsed = parseEmail(body);
+    const formData = await request.formData();
     
-    const fromEmail = normalizeEmailForMatching(parsed.from.email);
-    const toEmail = normalizeEmailForMatching(parsed.to[0].email);
-    const subject = parsed.subject || '';
-    const text = parsed.text || parsed.html || '';
+    const fromEmail = normalizeEmailForMatching(formData.get('from') as string || '');
+    const toEmail = normalizeEmailForMatching(formData.get('to') as string || '');
+    const subject = (formData.get('subject') as string) || '';
+    const text = (formData.get('text') as string) || (formData.get('html') as string) || '';
     
     // Find workspace by inbound email address
     const supabase = await createServiceClient();
@@ -61,7 +58,7 @@ export async function POST(request: NextRequest) {
       });
     } else {
       // This is a new lead
-      const customerName = extractNameFromEmail(fromEmail) || parsed.from.name;
+      const customerName = extractNameFromEmail(fromEmail);
       const threadId = extractThreadId(subject);
       
       const lead = await createLead({
