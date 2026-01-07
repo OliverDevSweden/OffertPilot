@@ -1,8 +1,18 @@
 import Stripe from 'stripe';
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-02-24.acacia',
-});
+let stripeInstance: Stripe | null = null;
+
+function getStripe(): Stripe {
+  if (!stripeInstance && process.env.STRIPE_SECRET_KEY) {
+    stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-02-24.acacia',
+    });
+  }
+  if (!stripeInstance) {
+    throw new Error('Stripe not initialized - STRIPE_SECRET_KEY missing');
+  }
+  return stripeInstance;
+}
 
 export const STRIPE_PLANS = {
   starter: {
@@ -64,7 +74,7 @@ export async function createCheckoutSession(
 ) {
   const planConfig = STRIPE_PLANS[plan];
   
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     customer: customerId,
     mode: 'subscription',
     payment_method_types: ['card'],
@@ -86,7 +96,7 @@ export async function createCheckoutSession(
 }
 
 export async function createCustomerPortalSession(customerId: string, workspaceId: string) {
-  const session = await stripe.billingPortal.sessions.create({
+  const session = await getStripe().billingPortal.sessions.create({
     customer: customerId,
     return_url: `${process.env.NEXT_PUBLIC_APP_BASE_URL}/dashboard/${workspaceId}/billing`,
   });
@@ -98,7 +108,7 @@ export async function constructWebhookEvent(
   body: string,
   signature: string
 ) {
-  return stripe.webhooks.constructEvent(
+  return getStripe().webhooks.constructEvent(
     body,
     signature,
     process.env.STRIPE_WEBHOOK_SECRET!

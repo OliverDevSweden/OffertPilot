@@ -1,6 +1,13 @@
 import sgMail from '@sendgrid/mail';
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+let isInitialized = false;
+
+function initializeSendGrid() {
+  if (!isInitialized && process.env.SENDGRID_API_KEY) {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    isInitialized = true;
+  }
+}
 
 export interface SendEmailParams {
   to: string;
@@ -12,6 +19,8 @@ export interface SendEmailParams {
 }
 
 export async function sendEmail(params: SendEmailParams): Promise<string | null> {
+  initializeSendGrid();
+  
   try {
     const msg = {
       to: params.to,

@@ -1,9 +1,19 @@
 import OpenAI from 'openai';
 import { EmailEnhancementContext } from '@/types';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openaiInstance: OpenAI | null = null;
+
+function getOpenAI(): OpenAI {
+  if (!openaiInstance && process.env.OPENAI_API_KEY) {
+    openaiInstance = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  if (!openaiInstance) {
+    throw new Error('OpenAI not initialized - OPENAI_API_KEY missing');
+  }
+  return openaiInstance;
+}
 
 export async function enhanceEmail(
   subject: string,
@@ -33,7 +43,7 @@ Returnera JSON med denna exakta struktur:
   "body": "förbättrad brödtext"
 }`;
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
