@@ -122,12 +122,14 @@ export default function LeadsContent({ workspace, leads }: Props) {
                         {formatDateTime(lead.created_at)}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500">
-                        {lead.sequence_state?.is_paused
+                        {(lead.sequence_state as any)?.is_paused
                           ? "Pausad"
-                          : lead.sequence_state?.is_completed
+                          : (lead.sequence_state as any)?.is_completed
                           ? "Klar"
-                          : lead.sequence_state?.next_send_at
-                          ? formatDateTime(lead.sequence_state.next_send_at)
+                          : (lead.sequence_state as any)?.next_send_at
+                          ? formatDateTime(
+                              (lead.sequence_state as any).next_send_at
+                            )
                           : "-"}
                       </td>
                     </tr>

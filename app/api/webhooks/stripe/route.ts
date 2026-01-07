@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const event = await constructWebhookEvent(body, signature);
-    const supabase = await createServiceClient();
+    const supabase: any = await createServiceClient();
 
     switch (event.type) {
       case 'checkout.session.completed': {

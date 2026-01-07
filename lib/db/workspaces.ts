@@ -22,7 +22,7 @@ export async function getUserWorkspaces(userId: string) {
   
   if (error) throw error;
   
-  return data.map(item => ({
+  return (data as any).map((item: any) => ({
     ...item.workspaces,
     role: item.role,
   }));
@@ -57,7 +57,7 @@ export async function getWorkspaceBySlug(slug: string) {
 }
 
 export async function createWorkspace(data: CreateWorkspaceData, userId: string) {
-  const supabase = await createClient();
+  const supabase: any = await createClient();
   
   // Generate inbound email address
   const { data: inboundEmail, error: emailError } = await supabase
@@ -108,7 +108,7 @@ export async function createWorkspace(data: CreateWorkspaceData, userId: string)
 }
 
 export async function updateWorkspace(workspaceId: string, data: Partial<CreateWorkspaceData>) {
-  const supabase = await createClient();
+  const supabase: any = await createClient();
   
   const { data: workspace, error } = await supabase
     .from('workspaces')

@@ -11,7 +11,7 @@ export async function createMessage(data: {
   to_email?: string;
   sendgrid_message_id?: string;
 }) {
-  const supabase = await createServiceClient();
+  const supabase: any = await createServiceClient();
   
   const { data: message, error } = await supabase
     .from('messages')

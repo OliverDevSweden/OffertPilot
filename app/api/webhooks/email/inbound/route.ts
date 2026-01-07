@@ -65,8 +65,8 @@ export async function POST(request: NextRequest) {
         workspace_id: (workspace as any).id,
         customer_email: fromEmail,
         customer_name: customerName,
-        thread_id: threadId,
-      });
+        thread_id: threadId || undefined,
+      }) as any;
       
       // Save the initial message
       await createMessage({

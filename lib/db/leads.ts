@@ -38,7 +38,7 @@ export async function getLeadById(leadId: string) {
 }
 
 export async function createLead(data: CreateLeadData) {
-  const supabase = await createClient();
+  const supabase: any = await createClient();
   
   // Create lead
   const { data: lead, error: leadError } = await supabase
@@ -60,7 +60,7 @@ export async function createLead(data: CreateLeadData) {
   if (sequenceError) throw sequenceError;
   
   // Get first step delay
-  const firstStep = defaultSequence.sequence_steps.find(s => s.step_number === 1);
+  const firstStep = (defaultSequence.sequence_steps as any).find((s: any) => s.step_number === 1);
   const nextSendAt = firstStep ? addDays(new Date(), firstStep.delay_days) : null;
   
   // Create lead sequence state
@@ -79,7 +79,7 @@ export async function createLead(data: CreateLeadData) {
 }
 
 export async function updateLeadStatus(leadId: string, status: LeadStatus, pausedReason?: string) {
-  const supabase = await createClient();
+  const supabase: any = await createClient();
   
   // Update lead status
   const { error: leadError } = await supabase
@@ -153,7 +153,7 @@ export async function updateLeadSequenceState(
     is_completed?: boolean;
   }
 ) {
-  const supabase = await createServiceClient();
+  const supabase: any = await createServiceClient();
   
   const { error } = await supabase
     .from('lead_sequence_state')
